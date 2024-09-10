@@ -1,12 +1,12 @@
-// require("dotenv").config();
+require("dotenv").config();
 
-// const knex = require("knex");
-// const { Model } = require("objection");
+const knex = require("knex");
+const { Model } = require("objection");
 
-// const knexConfig = require("../knexfile.js");
+const knexConfig = require("../knexfile.js");
 
-// const db = knex(knexConfig.development);
+const db = knex(knexConfig.development);
 
-// Model.knex(db);
+Model.knex(db);
 
-// module.exports = { knex, Model };
+module.exports = { knex, Model };
