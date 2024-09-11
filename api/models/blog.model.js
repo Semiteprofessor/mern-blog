@@ -1,8 +1,12 @@
 const { Model } = require("objection");
 
-class Post extends Model {
+class User extends Model {
   static get tableName() {
     return "posts";
+  }
+
+  static get idColumn() {
+    return "id";
   }
 
   static get jsonSchema() {
