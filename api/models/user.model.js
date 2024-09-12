@@ -18,7 +18,8 @@ class User extends Model {
         id: { type: "integer" },
         name: { type: "string", minLength: 3, maxLength: 20 },
         email: { type: "string", format: "email" },
-        password: { type: "string", minLength: 8, maxLength: 100 },
+        password_hash: { type: "string", minLength: 8, maxLength: 100 },
+        password_salt: { type: "string", minLength: 8, maxLength: 100 },
         createdAt: {
           type: "string",
           format: "date-time",
