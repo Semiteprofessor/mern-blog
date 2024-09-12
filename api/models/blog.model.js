@@ -36,7 +36,7 @@ class User extends Model {
   }
 
   static get relationMappings() {
-    const User = require("./User");
+    const User = require("../models/user.model");
     return {
       author: {
         relation: Model.BelongsToOneRelation,
