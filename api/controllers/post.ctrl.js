@@ -1,7 +1,7 @@
 const Post = require("../models/post.model");
 
 // Create a new post
-const createPost = await (req, res) => {
+const createPost = async (req, res) => {
   const { title, desc, username } = req.body;
 
   try {
@@ -71,4 +71,30 @@ const updatePostById = async (req, res) => {
     console.error("Error updating post by ID:", error.message);
     return res.status(500).json({ message: "Post updated successfully" });
   }
+}
+
+// Delete by ID
+const deletePostById = async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    const post = await Post.query().findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    await Post.query().deleteById(postId);
+    return res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post by ID:", error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  createPost,
+  getAllPosts,
+  getPostById,
+  updatePostById,
+  deletePostById,
 }
