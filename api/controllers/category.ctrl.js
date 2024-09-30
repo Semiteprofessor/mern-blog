@@ -15,7 +15,9 @@ const createCategory = async (req, res, next) => {
       name,
       description,
     });
-    return res.status(200).json({ message: "Category created successfully" });
+    return res
+      .status(200)
+      .json({ message: "Category created successfully", data: category });
   } catch (error) {
     console.error("Error deleting user:", error.message);
     return res.status(400).json({ error: error.message });
