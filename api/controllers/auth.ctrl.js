@@ -1,7 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user.model");
-const { hashPassword } = require("../utils/password");
-const { validateCreateAccount } = require("../validation"); 
+const { hashPassword } = require("../utils/helper");
 
 const createUser = async (req, res) => {
   // Validate user input
@@ -57,4 +56,55 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = createUser;
+// Login user
+const login = async (req, res) => {
+  // Validate user input
+  const { error } = validateLogin(req.body);
+  if (error !== undefined) {
+    res.status(400).json({
+      status: false,
+      message: error.details[0].message || "Bad request",
+    });
+    return;
+  }
+
+  try {
+    const { email, password } = req.body;
+
+    // Check if the user exists
+    const user = await User.query()
+      .select("user_id", "email", "password_hash", "password_salt")
+      .where("email", email);
+
+    if (user.length === 0) {
+      res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+      return;
+    }
+
+    // Compare the password
+    const compareHash = await bcrypt.compare(password, user.password_hash);
+    if (!compareHash) throw new Error("Invalid email or password");
+
+    const token = await jwt.sign(
+      { email: user.email, _id: uuidv4() },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "User logged in successfully",
+      token: token,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
