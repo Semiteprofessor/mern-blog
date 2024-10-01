@@ -1,10 +1,9 @@
 const { Model } = require("objection");
 
-class User extends Model {
+class Category extends Model {
   static get tableName() {
-    return "posts";
+    return "categories";
   }
-
   static get idColumn() {
     return "id";
   }
@@ -12,15 +11,10 @@ class User extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["title", "desc", "username"],
-
+      required: ["name", "createdAt", "updatedAt"],
       properties: {
         id: { type: "integer" },
-        title: { type: "string", minLength: 1, maxLength: 255 },
-        desc: { type: "string", minLength: 1 },
-        photo: { type: "string", maxLength: 255 },
-        username: { type: "string", minLength: 1, maxLength: 255 },
-        categories: { type: "array", items: { type: "string" } },
+        name: { type: "string", minLength: 3, maxLength: 50 },
         createdAt: {
           type: "string",
           format: "date-time",
@@ -36,19 +30,24 @@ class User extends Model {
   }
 
   static get relationMappings() {
-    const User = require("../models/user.model");
+    const Post = require("../models/post.model");
     return {
-      author: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: User,
+      posts: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Post,
         join: {
-          from: "posts.username",
-          to: "users.username",
+          from: "categories.id",
+          through: {
+            modelClass: require("../models/category_post.model"),
+            join: {
+              from: "categories.id",
+              to: "category_posts.categoryId",
+            },
+          },
+          to: "posts.id",
         },
       },
     };
     return {};
   }
 }
-
-module.exports = Post;
