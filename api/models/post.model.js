@@ -12,7 +12,7 @@ class Post extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["title", "desc", "username"],
+      required: ["title", "desc"],
 
       properties: {
         id: { type: "integer" },
@@ -46,6 +46,20 @@ class Post extends Model {
           to: "users.username",
         },
       },
+      categories: {
+        relation: Model.ManyToManyRelation,
+        modelClass: require("./category.model"),
+        join: {
+          from: "posts.id",
+          through: {
+            modelClass: require("./category.model"),
+            join: {
+              from: "posts.id",
+              to: "categories.id",
+            },
+          },
+        },
+      }
     };
     return {};
   }
